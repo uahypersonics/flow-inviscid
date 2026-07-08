@@ -35,4 +35,5 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          slug: uahypersonics/flow-inviscid
           fail_ci_if_error: false
