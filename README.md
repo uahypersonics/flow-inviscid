@@ -6,6 +6,7 @@ Newtonian, shock-expansion, method of characteristics, and linearized supersonic
 
 [![PyPI](https://img.shields.io/pypi/v/flow-inviscid)](https://pypi.org/project/flow-inviscid/)
 [![Tests](https://github.com/uahypersonics/flow-inviscid/actions/workflows/test.yml/badge.svg)](https://github.com/uahypersonics/flow-inviscid/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/uahypersonics/flow-inviscid/branch/main/graph/badge.svg)](https://codecov.io/gh/uahypersonics/flow-inviscid)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21253244.svg)](https://doi.org/10.5281/zenodo.21253244)
 [![Docs](https://img.shields.io/badge/docs-zensical-blue)](https://uahypersonics.github.io/flow-inviscid/)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)

@@ -35,6 +35,7 @@ flow-inviscid = "flow_inviscid.cli:cli"
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
+    "pytest-cov",
     "ruff>=0.1.0",
     "zensical",
 ]
@@ -48,7 +49,9 @@ where = ["src"]
 
 [tool.setuptools_scm]
 
-[tool.ruff]
+[tool.pytest.ini_options]
+addopts = "--cov=flow_inviscid --cov-report=xml"
+
 line-length = 88
 target-version = "py311"
 
