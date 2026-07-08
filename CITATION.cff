@@ -9,7 +9,7 @@ authors:
     affiliation: "University of Arizona"
     orcid: "https://orcid.org/0000-0002-0956-000X"
 repository-code: "https://github.com/uahypersonics/flow-inviscid"
-version: "0.1.0"
+version: "0.1.1"
 date-released: "2026-07-07"
 license: BSD-3-Clause
 keywords:
