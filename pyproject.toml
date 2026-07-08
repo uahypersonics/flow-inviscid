@@ -1,0 +1,56 @@
+# BSD-3-Clause License - see LICENSE file
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm>=8", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flow-inviscid"
+dynamic = ["version"]
+description = "Inviscid supersonic and hypersonic surface solutions: Taylor-Maccoll, Newtonian, tangent-cone, shock-expansion"
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+requires-python = ">=3.11"
+authors = [
+    {name = "Christoph Hader", email = "chader@arizona.edu"},
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+keywords = ["aerodynamics", "hypersonics", "inviscid", "taylor-maccoll", "newtonian"]
+
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "typer>=0.9.0",
+]
+
+[project.scripts]
+flow-inviscid = "flow_inviscid.cli:cli"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.1.0",
+    "zensical",
+]
+
+[project.urls]
+Homepage = "https://github.com/uahypersonics/flow-inviscid"
+Repository = "https://github.com/uahypersonics/flow-inviscid"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]

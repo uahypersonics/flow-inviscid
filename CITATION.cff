@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "flow-inviscid"
+abstract: "Engineering-level inviscid surface conditions for supersonic and hypersonic bodies. Computes edge Mach, pressure, and temperature along a body contour using classical methods (tangent-cone, Modified Newtonian, shock-expansion, method of characteristics, linearized supersonic) without a full Euler field solve."
+type: software
+authors:
+  - family-names: "Hader"
+    given-names: "Christoph"
+    affiliation: "University of Arizona"
+    orcid: "https://orcid.org/0000-0002-0956-000X"
+repository-code: "https://github.com/uahypersonics/flow-inviscid"
+version: "0.1.0"
+date-released: "2026-07-07"
+license: BSD-3-Clause
+keywords:
+  - inviscid flow
+  - hypersonics
+  - supersonic
