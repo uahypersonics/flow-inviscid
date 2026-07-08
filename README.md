@@ -23,6 +23,8 @@ under construction
 
 ## Documentation
 
+Full documentation: https://uahypersonics.github.io/flow-inviscid
+
 ## Validation and Verification
 
 under construction
