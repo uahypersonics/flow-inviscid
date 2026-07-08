@@ -50,8 +50,9 @@ where = ["src"]
 [tool.setuptools_scm]
 
 [tool.pytest.ini_options]
-addopts = "--cov=flow_inviscid --cov-report=xml"
+addopts = "--cov=flow_inviscid --cov-report=xml --cov-report=term-missing"
 
+[tool.ruff]
 line-length = 88
 target-version = "py311"
 
