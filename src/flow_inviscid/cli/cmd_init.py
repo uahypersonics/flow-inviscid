@@ -31,6 +31,32 @@ _FORCE_OPTION = Annotated[
 
 
 # --------------------------------------------------
+# shared helper:
+# - check if file exists and refuse unless --force was requested
+# - write the config file
+# --------------------------------------------------
+def _init(method_key: str, path: Path, force: bool) -> None:
+    """Check existence, write config, and report to the user."""
+    # check if file exists before writing; refuse unless force was requested
+    if path.exists() and not force:
+        typer.echo(
+            typer.style(
+                f"error: {path} already exists. Use --force to overwrite.",
+                fg=typer.colors.RED,
+                bold=True,
+            ),
+            err=True,
+        )
+        raise typer.Exit(1)
+    # write the template file
+    write_config(method_key, path)
+    # report what was written and how to run it
+    typer.echo(f"Written: {path}")
+    typer.echo(f"Edit {path} to add body, freestream, and output settings.")
+    typer.echo(f"Then run: flow-inviscid solve {path}")
+
+
+# --------------------------------------------------
 # init tangent-cone
 # --------------------------------------------------
 def cmd_init_tangent_cone(
@@ -41,7 +67,7 @@ def cmd_init_tangent_cone(
     force: _FORCE_OPTION = False,
 ) -> None:
     """Generate a config file for the tangent-cone method."""
-    write_config("tangent_cone", output, force=force)
+    _init("tangent_cone", output, force)
 
 
 # --------------------------------------------------
@@ -55,7 +81,7 @@ def cmd_init_newtonian(
     force: _FORCE_OPTION = False,
 ) -> None:
     """Generate a config file for the Modified Newtonian method."""
-    write_config("newtonian", output, force=force)
+    _init("newtonian", output, force)
 
 
 # --------------------------------------------------
@@ -69,4 +95,4 @@ def cmd_init_shock_expansion(
     force: _FORCE_OPTION = False,
 ) -> None:
     """Generate a config file for the shock-expansion method."""
-    write_config("shock_expansion", output, force=force)
+    _init("shock_expansion", output, force)

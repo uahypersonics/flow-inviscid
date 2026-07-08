@@ -4,7 +4,6 @@
 # load necessary modules
 # --------------------------------------------------
 import pytest
-from click.exceptions import Exit as ClickExit
 
 from flow_inviscid.config.reader import read_config
 from flow_inviscid.config.writer import write_config
@@ -44,18 +43,11 @@ class TestReaderWriter:
         write_config("newtonian", path)
         assert path.exists()
 
-    def test_force_false_blocks_overwrite(self, tmp_path):
-        # without --force, writing to an existing file should raise SystemExit
+    def test_write_overwrites_existing_file(self, tmp_path):
+        # write_config always writes; caller controls whether to reach it
         path = tmp_path / "existing.toml"
         write_config("newtonian", path)
-        with pytest.raises(ClickExit):
-            write_config("newtonian", path, force=False)
-
-    def test_force_true_allows_overwrite(self, tmp_path):
-        # with force=True, overwriting should succeed
-        path = tmp_path / "existing.toml"
-        write_config("newtonian", path)
-        write_config("tangent_cone", path, force=True)
+        write_config("tangent_cone", path)  # second write must not raise
         cfg = read_config(path)
         assert cfg.method.name == "tangent_cone"
 
