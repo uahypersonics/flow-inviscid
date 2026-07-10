@@ -6,8 +6,7 @@
 import pytest
 from pydantic import ValidationError
 
-from flow_inviscid.config.schema import Config, MethodConfig, VALID_METHODS
-
+from flow_inviscid.config.schema import VALID_METHODS, Config, MethodConfig
 
 # --------------------------------------------------
 # MethodConfig tests

@@ -5,8 +5,6 @@
 # --------------------------------------------------
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 from typer.testing import CliRunner
 
@@ -78,13 +76,13 @@ class TestInitCommands:
 # solve subcommand
 # --------------------------------------------------
 class TestSolveCommand:
-    def test_solve_not_implemented(self, tmp_path):
-        # solve on a valid config must exit 1 (stub) without crashing
+    def test_solve_method_not_implemented(self, tmp_path):
+        # tangent-cone is not yet implemented — solve must exit 1 with a clear message
         out = tmp_path / "tc.toml"
         runner.invoke(cli, ["init", "tangent-cone", "--output", str(out)])
         result = runner.invoke(cli, ["solve", str(out)])
         assert result.exit_code == 1
-        assert "Not yet implemented" in result.output
+        assert "not yet implemented" in result.output.lower()
 
     def test_solve_missing_file(self, tmp_path):
         # solve on a non-existent file must exit non-zero

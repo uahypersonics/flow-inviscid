@@ -6,7 +6,6 @@
 from flow_inviscid.config.schema import VALID_METHODS
 from flow_inviscid.config.template import TEMPLATES
 
-
 # --------------------------------------------------
 # template registry tests
 # --------------------------------------------------

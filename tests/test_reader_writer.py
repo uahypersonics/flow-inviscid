@@ -8,7 +8,6 @@ import pytest
 from flow_inviscid.config.reader import read_config
 from flow_inviscid.config.writer import write_config
 
-
 # --------------------------------------------------
 # round-trip tests
 # --------------------------------------------------
