@@ -5,8 +5,6 @@
 # --------------------------------------------------
 from __future__ import annotations
 
-import logging
-import sys
 from typing import Annotated
 
 import typer
@@ -14,6 +12,7 @@ import typer
 # --------------------------------------------------
 # package imports
 # --------------------------------------------------
+from flow_inviscid.cli.callbacks import verbose_callback, version_callback
 from flow_inviscid.cli.cmd_init import (
     cmd_init_newtonian,
     cmd_init_shock_expansion,
@@ -57,60 +56,32 @@ init_app = typer.Typer(
     no_args_is_help=True,
 )
 
-
 # --------------------------------------------------
-# version callback
-# --------------------------------------------------
-def _version_callback(value: bool) -> None:
-    """Print version and exit."""
-    if value:
-        from flow_inviscid import __version__
-        typer.echo(f"flow-inviscid {__version__}")
-        raise typer.Exit()
-
-
-# --------------------------------------------------
-# main callback
+# main callback decorator
+# add global options such as --version and --verbose
 # --------------------------------------------------
 @cli.callback()
 def main(
-    ctx: typer.Context,
     version: Annotated[
         bool | None,
         typer.Option(
             "--version",
             "-V",
             help="Show version and exit.",
-            callback=_version_callback,
+            callback=version_callback,
             is_eager=True,
         ),
     ] = None,
     verbose: Annotated[
         bool,
-        typer.Option("--verbose", "-v", help="Enable informational output."),
+        typer.Option(
+            "--verbose", "-v",
+            help="Enable informational output.",
+            callback=verbose_callback,
+        ),
     ] = False,
 ) -> None:
     """flow-inviscid: inviscid surface conditions for supersonic and hypersonic bodies."""
-
-    # store verbose flag in context for subcommands
-    ctx.ensure_object(dict)
-    ctx.obj["verbose"] = verbose
-
-    # configure logging if verbose is requested
-    if verbose:
-        logger = logging.getLogger("flow_inviscid")
-        logger.setLevel(logging.INFO)
-
-        # attach a stderr handler; guard prevents duplicates
-        has_stream_handler = any(
-            isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
-            for h in logger.handlers
-        )
-        if not has_stream_handler:
-            handler = logging.StreamHandler(sys.stderr)
-            handler.setLevel(logging.INFO)
-            handler.setFormatter(logging.Formatter("[%(levelname)-7s] %(name)s: %(message)s"))
-            logger.addHandler(handler)
 
 
 # --------------------------------------------------
