@@ -96,3 +96,19 @@ extra_javascript:
 nav:
   - Home: index.md
   - Installation: installation.md
+  - User Guide:
+    - Overview: user_guide/index.md
+    - Workflow: user_guide/workflow.md
+    - Configuration: user_guide/configuration.md
+  - Theory:
+    - theory/index.md
+  - CLI Reference:
+    - cli_reference/index.md
+  - API Reference:
+    - api_reference/index.md
+  - Validation and Verification:
+    - vnv/index.md
+    - Verification: vnv/verification/index.md
+    - Validation: vnv/validation/index.md
+  - Examples: examples.md
+  - Nomenclature: nomenclature.md
