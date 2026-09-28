@@ -21,4 +21,6 @@ under construction
 
 ## License
 
-BSD-3-Clause. See [LICENSE](https://github.com/uahypersonics/flow-inviscid/blob/main/LICENSE) for details.
+GNU General Public License v3.0 or later. See
+[LICENSE](https://github.com/uahypersonics/flow-inviscid/blob/main/LICENSE) for
+the complete license terms.

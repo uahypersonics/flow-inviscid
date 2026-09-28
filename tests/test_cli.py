@@ -76,10 +76,48 @@ class TestInitCommands:
 # solve subcommand
 # --------------------------------------------------
 class TestSolveCommand:
-    def test_solve_method_not_implemented(self, tmp_path):
-        # tangent-cone is not yet implemented — solve must exit 1 with a clear message
+    def test_solve_tangent_cone(self, tmp_path):
+        # write the required tangent-cone inputs
         out = tmp_path / "tc.toml"
-        runner.invoke(cli, ["init", "tangent-cone", "--output", str(out)])
+        flow = tmp_path / "freestream.json"
+        body = tmp_path / "body.dat"
+        result_path = tmp_path / "result.dat"
+        flow.write_text(
+            '{"mach": [5.3, "-"], "gamma": [1.4, "-"], '
+            '"pres": [1827.6393385767838, "Pa"], '
+            '"pres_stag": [1362806.4087942184, "Pa"]}',
+            encoding="utf-8",
+        )
+        body.write_text("0.0 0.0\n0.01 0.001763\n0.02 0.003527\n", encoding="utf-8")
+        out.write_text(
+            "\n".join(
+                [
+                    '[method]\nname = "tangent_cone"',
+                    "[flow_conditions]",
+                    f'file = "{flow}"',
+                    "[body]",
+                    f'geometry_file = "{body}"',
+                    'geometry_type = "axisymmetric"',
+                    "[output]",
+                    f'file = "{result_path}"',
+                    'format = "tecplot"',
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+        # run tangent-cone through the public solve command
+        result = runner.invoke(cli, ["solve", str(out)])
+
+        assert result.exit_code == 0
+        assert result_path.exists()
+        assert "Tangent Cone" in result.output
+
+    def test_solve_unknown_method_reports_error(self, tmp_path):
+        # tangent-cone is no longer the unimplemented-method case
+        out = tmp_path / "unknown.toml"
+        out.write_text('[method]\nname = "shock_expansion"\n', encoding="utf-8")
+
         result = runner.invoke(cli, ["solve", str(out)])
         assert result.exit_code == 1
         assert "not yet implemented" in result.output.lower()

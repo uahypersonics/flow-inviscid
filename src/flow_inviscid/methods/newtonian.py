@@ -157,27 +157,31 @@ def _cp_max(mach: float, gamma: float, pres_inf: float) -> tuple[float, float]:
 # --------------------------------------------------
 # compute local surface Mach number from isentropic relations
 # --------------------------------------------------
-def _surface_mach(p_s: np.ndarray, p02: float, pres_inf: float, gamma: float) -> np.ndarray:
+def _surface_mach(
+    p_s: np.ndarray,
+    pres_stag: float,
+    gamma: float,
+) -> np.ndarray:
     """Compute local surface Mach number from isentropic relations.
 
-    Uses the stagnation pressure p02 (behind normal shock at nose)
-    and the local surface pressure p_s to invert:
+    Uses the freestream stagnation pressure and local surface pressure
+    to invert:
 
-        p02 / p_s = (1 + (gamma-1)/2 * Ms^2)^(gamma/(gamma-1))
+        p0_inf / p_s = (1 + (gamma-1)/2 * Ms^2)^(gamma/(gamma-1))
 
-    Returns zero for any point where p_s >= p02 (degenerate).
+    This is an isentropic-equivalent edge Mach estimate. It does not model
+    the spatial total-pressure loss through the detached bow shock.
 
     Args:
         p_s:      local surface static pressure [Pa]
-        p02:      total pressure behind normal shock [Pa]
-        pres_inf: freestream static pressure [Pa]
+        pres_stag: freestream stagnation pressure [Pa]
         gamma:    ratio of specific heats
 
     Returns:
         Local surface Mach number array
     """
-    # isentropic inversion: Ms = sqrt(2/(gamma-1) * ((p02/p_s)^((gamma-1)/gamma) - 1))
-    ratio = np.where(p_s < p02, p02 / np.maximum(p_s, 1e-30), 1.0)
+    # isentropic inversion: Ms = sqrt(2/(gamma-1) * ((p0/p_s)^((gamma-1)/gamma) - 1))
+    ratio = np.maximum(pres_stag / np.maximum(p_s, 1e-30), 1.0)
     exponent = (gamma - 1.0) / gamma
     inner = np.maximum(ratio**exponent - 1.0, 0.0)
     mach_s = np.sqrt(2.0 / (gamma - 1.0) * inner)
@@ -259,8 +263,15 @@ def solve_newtonian(cfg: Config) -> NewtonianResult:
     gamma: float    = fc["gamma"]
     pres_inf: float = fc["pres"]
 
-    # compute cp_max and p02 from freestream conditions
-    cp_max, p02 = _cp_max(mach_inf, gamma, pres_inf)
+    # compute cp_max from freestream conditions
+    cp_max, _ = _cp_max(mach_inf, gamma, pres_inf)
+
+    # read freestream stagnation pressure for edge-Mach reconstruction
+    if "pres_stag" not in fc:
+        raise ValueError(
+            "flow conditions must provide pres_stag for Mach reconstruction"
+        )
+    pres_stag: float = fc["pres_stag"]
 
     # load body coordinates and compute surface geometry
     x, y = _load_body(cfg.body.geometry_file)
@@ -272,9 +283,9 @@ def solve_newtonian(cfg: Config) -> NewtonianResult:
     # surface pressure ratio: p_s / p_inf = 1 + (gamma * M_inf^2 / 2) * cp
     p_p_inf = 1.0 + 0.5 * gamma * mach_inf**2 * cp
 
-    # surface Mach from isentropic inversion using p_s [Pa]
+    # surface Mach from isentropic inversion using freestream p0 [Pa]
     p_s = p_p_inf * pres_inf
-    mach_surface = _surface_mach(p_s, p02, pres_inf, gamma)
+    mach_surface = _surface_mach(p_s, pres_stag, gamma)
 
     return NewtonianResult(
         x=geom.x,

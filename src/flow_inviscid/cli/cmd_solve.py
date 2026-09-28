@@ -14,6 +14,7 @@ import typer
 from flow_inviscid.config import read_config
 from flow_inviscid.io import write_tecplot
 from flow_inviscid.methods.newtonian import solve_newtonian
+from flow_inviscid.methods.tangent_cone import solve_tangent_cone
 
 
 # --------------------------------------------------
@@ -109,6 +110,48 @@ def _run_newtonian(cfg, config_path: Path) -> None:
     typer.echo(f"  Written: {out_path}  ({len(result.x)} points)")
 
 
+def _run_tangent_cone(cfg, config_path: Path) -> None:
+    """Run tangent-cone theory and write Tecplot output."""
+
+    # validate that required sections are present
+    if cfg.flow_conditions is None or cfg.body is None or cfg.output is None:
+        typer.echo(
+            "error: tangent_cone requires [flow_conditions], [body], and [output] sections.",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    # run the hybrid tangent-cone solver
+    typer.echo(
+        f"Running Tangent Cone  (Mach from {cfg.flow_conditions.file.name})"
+    )
+    result = solve_tangent_cone(cfg)
+
+    # report how many blunt-nose points used the Modified Newtonian fallback
+    typer.echo(
+        "  Modified Newtonian fallback points = "
+        f"{result.newtonian_fallback_points} / {len(result.x)}"
+    )
+
+    # write the tangent-cone result using the established output schema
+    out_path: Path = cfg.output.file
+    write_tecplot(
+        path=out_path,
+        title=f"flow-inviscid: Tangent Cone  M={result.mach_inf}",
+        variables=["x", "y", "s", "theta_deg", "cp", "p_p_inf", "mach_surface"],
+        data=[
+            result.x,
+            result.y,
+            result.s,
+            np.degrees(result.theta),
+            result.cp,
+            result.p_p_inf,
+            result.mach,
+        ],
+    )
+    typer.echo(f"  Written: {out_path}  ({len(result.x)} points)")
+
+
 # --------------------------------------------------
 # solve command
 # --------------------------------------------------
@@ -141,6 +184,8 @@ def cmd_solve(
     # dispatch to the correct method
     if cfg.method.name == "newtonian":
         _run_newtonian(cfg, config_path)
+    elif cfg.method.name == "tangent_cone":
+        _run_tangent_cone(cfg, config_path)
     else:
         typer.echo(f"error: method '{cfg.method.name}' is not yet implemented.", err=True)
         raise typer.Exit(1)

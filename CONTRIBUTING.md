@@ -59,4 +59,4 @@ Open an issue on GitHub with:
 
 ## License
 
-All contributions are made under the [BSD-3-Clause License](LICENSE).
+All contributions are made under the [GNU General Public License v3.0 or later](LICENSE).
